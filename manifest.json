@@ -1,0 +1,14 @@
+{
+    "name": "Tab Mark",
+    "version": "1.0",
+    "description": "Chrome extension program to save and load open tabs at once",
+    
+    "browser_action": {
+      "default_popup": "popup.html"
+    },
+    "permissions": [
+    "activeTab"
+  ],
+    
+    "manifest_version": 2
+}
