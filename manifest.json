@@ -1,0 +1,11 @@
+{
+    "name": "TabMark",
+    "version": "1.0",
+    "description": "Build an Extension!",
+    "permissions" : ["storage", "activeTab", "tabs"],
+    "browser_action" : {
+        "default_icon" : "get_started16.png",
+        "default_popup" : "popup.html"
+    },
+    "manifest_version": 2
+}
