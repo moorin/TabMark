@@ -2,7 +2,7 @@
     "name": "TabMark",
     "version": "1.0",
     "description": "Build an Extension!",
-    "permissions" : ["storage", "activeTab", "tabs"],
+    "permissions" : ["storage", "activeTab", "tabs", "unlimitedStorage"], //unlimitedStorage : 용량제한없는 저장 권한
     "browser_action" : {
         "default_icon" : "get_started16.png",
         "default_popup" : "popup.html"
