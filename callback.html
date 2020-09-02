@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script>
+    function plus(a, b, callback) {
+        var sum = a + b;
+        callback(sum)
+    }
+
+    function print(result) {
+        console.log(result);
+    }
+
+    plus(1, 3, print);
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
+
