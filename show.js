@@ -11,8 +11,8 @@ chrome.storage.onChanged.addListener(function(changes){
     console.log("inside onChanged\n");
     var titleStorage = changes['title'];
     var urlStorage = changes['url'];
-    console.log(titleStorage);
     console.log("titleStorage.newValue.length : "+titleStorage.newValue.length);
+    document.querySelector('#list').innerHTML = '';
     for(var i=0; i<titleStorage.newValue.length; i++){
         document.querySelector('#list').innerHTML +=
         "<h3>"+titleStorage.newValue[i]+"</h3>"+urlStorage.newValue[i]+"<br/>";
