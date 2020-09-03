@@ -1,43 +1,65 @@
-// Tab > active Whether the tab is active in its window. Does not necessarily mean the window is focused.
-
-// Tab > id The ID of the tab.
-
-// Tab > index The zero-based index of the tab within its window.
-
-// Tab > url The last committed URL of the main frame of the tab.
-
-// index 0~len(tabs) 의 url을 가져와야한다.
+var allTabTitles = [];
 
 
-function save(btn_click)
-{
-  console.log("test");
-  btn_click.onclick=function()
-  {
-    console.log("clicked!");
-  };
+function save(curruentTabTitle){
+  
+  // 저장하기
+  chrome.storage.sync.set({'title': curruentTabTitle}, function() {
+      console.log('Value is set to ' + curruentTabTitle);
+      console.log(curruentTabTitle);
+        });
+    
+    chrome.storage.sync.get(['title'], function(result) {
+      //console.log('Value currently is ' + result.title);
+  });
 }
+
+
+// 현재 윈도우의 모든 탭의 url 가져오기
+function getUrlAndTitle(saveData){
+  
+  chrome.windows.getAll({populate:true}, function(window_list){
+    
+    var currnetWindowTabTitles = [];
+    for(var i=0; i<window_list.length; i++){
+      for(var j=0; j<window_list[i].tabs.length; j++){
+
+        currnetWindowTabTitles.push(window_list[i].tabs[j].title);
+        //console.log(window_list[i].tabs[j].url, window_list[i].tabs[j].title);
+        
+        if(saveData == false)
+        {
+          // html 태그 만들기
+          var newLi = document.createElement("li");
+          var newInput = document.createElement("input");
+          var newSpan = document.createElement("span");
+          newInput.type = "checkbox"
+          newSpan.className = "tab_title";
+          var spanText = document.createTextNode(window_list[i].tabs[j].title);
+          newSpan.appendChild(spanText);
+          //console.log(newSpan);
+
+          document.getElementById("tab_titles").appendChild(newLi);
+          newLi.appendChild(newInput); newLi.appendChild(newSpan);
+        }
+      }
+    }
+    if(saveData == true)
+    {
+        save(currnetWindowTabTitles);
+    }
+    allTabTitles.push(currnetWindowTabTitles);
+    console.log(allTabTitles);
+    
+  });
+}
+
 
 window.onload = function()
 {
-  
-  chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
-    //lastFocusedWindow: true 이기 때문에 tabs[0]은 마지막 탭
-    
-    let url = tabs[0].url;
-    let id = tabs[0].id;
-    let index = tabs[0].index;
-    let oldindex = index;
-    console.log(url,id,index);
-    
-    
-    chrome.tabs.goBack(); // 뒤로 이동
-    console.log(tabs[0].length);
-  });
-  
-  
-  var btn_save = document.getElementsByClassName("popup_save")[0];
-  save(btn_save);
-  
-  
+  // 새로고침 버튼 만들어야할 듯
+  getUrlAndTitle(false);
+                        
+  document.getElementsByClassName("popup_save")[0].addEventListener('click', function(){getUrlAndTitle(true);},false);
+ 
 };
