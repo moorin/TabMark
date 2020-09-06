@@ -1,0 +1,23 @@
+h1{
+  margin-left: 50px;
+  display: inline;
+  line-height: 100px;
+}
+h2{
+  margin-left: 50px;
+  padding-top: 20px;
+}
+
+.header{
+  background-color:#CBD694;
+  margin: 0 -20px 0 -20px;
+  height: 100px;
+}
+
+.content{
+  height: 500px;
+  background-color:antiquewhite;
+  margin: -20px -20px 0 -20px;
+}
+
+  
