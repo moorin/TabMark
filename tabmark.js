@@ -1,6 +1,6 @@
 //저장한 데이터 꺼내와서 확인하기
 
-function load(loadData){
+function data_load(loadData){
     if (loadData==true)
     {
         chrome.storage.sync.get("title", function (items) {
@@ -24,24 +24,33 @@ function load(loadData){
             }
         });
 
-        chrome.storage.sync.get("url", function (items) {
-            // items: 저장한 객체의 key/value
-            
-            console.log(items);
-            for (var i = 0; i < items["url"].length; i++) {
-                console.log(items["url"][i]);
-            }
-        });
     }
 }
 
+//불러오기 버튼 누르면 저장되어있는 url을 현재 윈도우에 탭으로 띄워 줌
+function load(load_flag){
+    if(load_flag)
+    {
+        chrome.storage.sync.get("url", function (items) {
+            // items: 저장한 객체의 key/value
+            
+            //console.log(items);
+            for (var i = 0; i < items["url"].length; i++) {
+                //console.log(items["url"][i]);
+                chrome.tabs.create({url: items["url"][i]});
+            }
+            
+        });
+        
 
+    }
+}
 
 window.onload = function()
 {
   // 새로고침 버튼 만들어야할 듯
+    data_load(true);
     load(false);
-                        
     document.getElementsByClassName("load")[0].addEventListener('click', function(){load(true);},false);
 
 };
