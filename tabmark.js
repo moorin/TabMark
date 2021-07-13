@@ -6,7 +6,7 @@ function load(loadData){
         chrome.storage.sync.get("title", function (items) {
             // items: 저장한 객체의 key/value
             
-
+            console.log(items);
             for (var i = 0; i < items["title"].length; i++) {
             //저장한 파일을 tabmark.html의 <div class="save_list"></div>에 div(index) > li 형태로 띄워주기
             // html 태그 만들기
@@ -20,7 +20,16 @@ function load(loadData){
                 document.getElementById("save_list").appendChild(newLi);
                 newLi.appendChild(newSpan);
                 
-                console.log(items["title"][i]);
+                //console.log(items["title"][i]);
+            }
+        });
+
+        chrome.storage.sync.get("url", function (items) {
+            // items: 저장한 객체의 key/value
+            
+            console.log(items);
+            for (var i = 0; i < items["url"].length; i++) {
+                console.log(items["url"][i]);
             }
         });
     }

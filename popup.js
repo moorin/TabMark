@@ -1,20 +1,26 @@
 var allTabTitles = [];
 
-// 현재 윈도우의 모든 탭의 제목 가져오기
+
+// 현재 윈도우의 모든 탭의 URL, 제목 가져오기
 function getUrlAndTitle(saveData){
   
   chrome.windows.getAll({populate:true}, function(window_list){
     // window_list == 각 창들의 리스트, 그러니까 A 창에 3탭, B 창에 2탭
     var currnetWindowTabTitles = [];
+    var currnetWindowTabURLs= [];
+
     for(var i=0; i<window_list.length; i++){
       for(var j=0; j<window_list[i].tabs.length; j++){
         //예를들면 B 창의 탭의 길이 == 2
         currnetWindowTabTitles.push(window_list[i].tabs[j].title);
+        currnetWindowTabURLs.push(window_list[i].tabs[j].url);
+        console.log(currnetWindowTabTitles);
         // 지금 창의 탭의 n번째의 탭 제목을 저장
         //console.log(window_list[i].tabs[j].url, window_list[i].tabs[j].title);
         
         if(saveData == false)
         {
+          // html에 제목 추가
           // html 태그 만들기
           var newLi = document.createElement("li");
           var newInput = document.createElement("input");
@@ -23,16 +29,16 @@ function getUrlAndTitle(saveData){
           newSpan.className = "tab_title";
           var spanText = document.createTextNode(window_list[i].tabs[j].title);
           newSpan.appendChild(spanText);
-          //console.log(newSpan);
 
           document.getElementById("tab_titles").appendChild(newLi);
           newLi.appendChild(newInput); newLi.appendChild(newSpan);
+
         }
       }
     }
     if(saveData == true)
     {
-        save(currnetWindowTabTitles);
+        save(currnetWindowTabTitles, currnetWindowTabURLs);
     }
     allTabTitles.push(currnetWindowTabTitles);
     //console.log(allTabTitles);
@@ -56,12 +62,16 @@ function getUrlAndTitle(saveData){
 
 
 // 저장하기
-function save(curruentTabTitle) {
+function save(curruentTabTitle, currnetWindowTabURLs) {
   //그냥 저장
-    chrome.storage.sync.set({ title: curruentTabTitle }, function () {
+
+    chrome.storage.sync.set({title: curruentTabTitle}, function () {
         console.log("Value is set to " + curruentTabTitle);
-        //console.log(curruentTabTitle);
     });
+
+    chrome.storage.sync.set({url: currnetWindowTabURLs}, function () {
+      console.log("Value is set to " + currnetWindowTabURLs);
+  });
 
   //변경할 때
 /*
