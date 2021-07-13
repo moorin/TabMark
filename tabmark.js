@@ -5,31 +5,27 @@ function load(loadData){
     {
         chrome.storage.sync.get("title", function (items) {
             // items: 저장한 객체의 key/value
-            var newDiv = document.createElement("div");
-            newDiv.className = "save_item";
-            document.getElementById("save_list").appendChild(newDiv);
-        
+            
+
             for (var i = 0; i < items["title"].length; i++) {
             //저장한 파일을 tabmark.html의 <div class="save_list"></div>에 div(index) > li 형태로 띄워주기
             // html 태그 만들기
             // tabmark.html에 추가해야되니까 tabmark.js에 이 코드를 작성해야하고 그러면 변수값을 tabmark.js로 옮겨줘야한다.
-        
                 var newLi = document.createElement("li");
                 var newSpan = document.createElement("span");
-        
                 var spanText = document.createTextNode(items["title"][i]);
                 newSpan.appendChild(spanText);
-            //console.log(newSpan);
-        
-                document.getElementById("save_item").appendChild(newLi);
-                newLi.appendChild(newInput);
+                //console.log(newSpan);
+
+                document.getElementById("save_list").appendChild(newLi);
                 newLi.appendChild(newSpan);
-        
+                
                 console.log(items["title"][i]);
             }
         });
     }
 }
+
 
 
 window.onload = function()
