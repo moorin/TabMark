@@ -1,0 +1,21 @@
+body {
+    list-style: none;
+}
+
+.save_list{
+    border: 1px solid #000;
+    width: 300px;
+    overflow: hidden;
+}
+.left_div{
+    width: 30px;
+    border: 1px solid red;
+    display: block;
+    float: left;
+    
+}
+
+.right_div{
+    border: 1px solid blue;
+    float: left;
+}

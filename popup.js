@@ -25,7 +25,7 @@ function getUrlAndTitle(saveData){
           var newLi = document.createElement("li");
           var newInput = document.createElement("input");
           var newSpan = document.createElement("span");
-          newInput.type = "checkbox"
+          newInput.type = "checkbox";
           newSpan.className = "tab_title";
           var spanText = document.createTextNode(window_list[i].tabs[j].title);
           newSpan.appendChild(spanText);
