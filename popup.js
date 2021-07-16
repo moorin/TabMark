@@ -9,7 +9,7 @@ function getUrlAndTitle(saveData){
     var currnetWindowTabTitles = [];
     var currnetWindowTabURLs= [];
     
-
+    
     for(var i=0; i<window_list.length; i++){
       for(var j=0; j<window_list[i].tabs.length; j++){
         //예를들면 B 창의 탭의 길이 == 2
@@ -47,13 +47,13 @@ function getUrlAndTitle(saveData){
   });
 }
 
-
 //저장한 날짜, 시간 > 저장할 이름 > 탭 제목들
 
 
 // 저장하기
 function save(curruentTabTitle, currnetWindowTabURLs) {
 
+  console.log("save test:",curruentTabTitle);
   chrome.storage.sync.get("title", function (items) {
     
     // dict 이름 설정, indexing
@@ -63,17 +63,47 @@ function save(curruentTabTitle, currnetWindowTabURLs) {
     // 값이 존재한다면
     if("title" in items)
     {
-      chrome.storage.sync.get("title", function (new_items) {
-      // new_items라는 dict에 추가
+      chrome.storage.sync.get("title", function (items) {
+        var i = items["title"].length; // ex) 3개 저장, index 0,1,2, length 3, 
+
         for(var j=0; j<curruentTabTitle.length; j++) {
-          var i = 0;
-    
-          new_items["title"][i] = curruentTabTitle[j];
-          //console.log("new_items: ",new_items["title"][i]);
-          j++;
+          items["title"][i] = curruentTabTitle[j];
+          console.log("save test2: ",items["title"][i]);
+          i++;
         }
+        
+      });
+
+      chrome.storage.sync.get("url", function (items) {
+        var i = items["url"].length;
+
+        for(var j=0; j<currnetWindowTabURLs.length; j++) {
+          items["url"][i] = currnetWindowTabURLs[j];
+          i++;
+        }
+        
+      });
+
+      chrome.storage.sync.get("save_count", function (items) {
+        console.log("test1");
+        var save_count_list = [];
+        save_count_list.push(curruentTabTitle.length);
+        items["save_count"][save_count] = save_count_list;
+        console.log("test2");
       });
       save_count++;
+
+      chrome.storage.sync.set({title: items["title"]}, function () {
+        console.log("Value is set to " + items["title"]);
+      });
+
+      chrome.storage.sync.set({url: items["url"]}, function () {
+        //console.log("Value is set to " + currnetWindowTabURLs);
+      });
+
+      chrome.storage.sync.set({save_count: items["save_count"]}, function () {
+        //console.log("Value is set to " + curruentTabTitle.length);
+      });
     }
     // 존재하지 않는다면
     else
@@ -86,7 +116,7 @@ function save(curruentTabTitle, currnetWindowTabURLs) {
         //console.log("Value is set to " + currnetWindowTabURLs);
       });
 
-      chrome.storage.sync.set({tabs_count: curruentTabTitle.length}, function () {
+      chrome.storage.sync.set({save_count: curruentTabTitle.length}, function () {
         //console.log("Value is set to " + curruentTabTitle.length);
       });
       save_count++;
