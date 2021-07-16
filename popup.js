@@ -1,5 +1,5 @@
 var allTabTitles = [];
-
+var save_count = 0;
 
 // 현재 윈도우의 모든 탭의 URL, 제목 가져오기
 function getUrlAndTitle(saveData){
@@ -8,6 +8,7 @@ function getUrlAndTitle(saveData){
     // window_list == 각 창들의 리스트, 그러니까 A 창에 3탭, B 창에 2탭
     var currnetWindowTabTitles = [];
     var currnetWindowTabURLs= [];
+    
 
     for(var i=0; i<window_list.length; i++){
       for(var j=0; j<window_list[i].tabs.length; j++){
@@ -46,47 +47,51 @@ function getUrlAndTitle(saveData){
   });
 }
 
-/*
-저장을 어떻게 할 것인가?
-폴더 구조, tree? log(n), list? -> 찾을 때 시간 걸림
-개수는 대충? 0.5초 기준으로 1~10만개
-일단 list로 만들고 나중에 tree로 변경
 
-저장한 날짜, 시간 > 저장할 이름 > 탭 제목들
-*/
-
-// todo 1. js간 변수 공유 2. 두 html에 한 js 했을시 html태그 추가
-// 정보를 storage에 저장해놨다가 거기서 꺼내오기
-//https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Statements/export
-
+//저장한 날짜, 시간 > 저장할 이름 > 탭 제목들
 
 
 // 저장하기
 function save(curruentTabTitle, currnetWindowTabURLs) {
-  //그냥 저장
 
-    chrome.storage.sync.set({title: curruentTabTitle}, function () {
-        console.log("Value is set to " + curruentTabTitle);
-    });
+  chrome.storage.sync.get("title", function (items) {
+    
+    // dict 이름 설정, indexing
+    // 사용 불가: console.log(eval("new_items_"+"="+""+("new_items_"+String(save_count))));
+    
 
-    chrome.storage.sync.set({url: currnetWindowTabURLs}, function () {
-      console.log("Value is set to " + currnetWindowTabURLs);
-  });
-
-  //변경할 때
-/*
-    chrome.storage.onChanged.addListener(function(changes, namespace) {
-        for (var key in changes) {
-        var storageChange = changes[key];
-        console.log('Storage key "%s" in namespace "%s" changed. ' +
-                    'Old value was "%s", new value is "%s".',
-                    key,
-                    namespace,
-                    storageChange.oldValue, //이전값
-                    storageChange.newValue);//변경된값
+    // 값이 존재한다면
+    if("title" in items)
+    {
+      chrome.storage.sync.get("title", function (new_items) {
+      // new_items라는 dict에 추가
+        for(var j=0; j<curruentTabTitle.length; j++) {
+          var i = 0;
+    
+          new_items["title"][i] = curruentTabTitle[j];
+          //console.log("new_items: ",new_items["title"][i]);
+          j++;
         }
-    });
-    */
+      });
+      save_count++;
+    }
+    // 존재하지 않는다면
+    else
+    {
+      chrome.storage.sync.set({title: curruentTabTitle}, function () {
+        //console.log("Value is set to " + curruentTabTitle);
+      });
+
+      chrome.storage.sync.set({url: currnetWindowTabURLs}, function () {
+        //console.log("Value is set to " + currnetWindowTabURLs);
+      });
+
+      chrome.storage.sync.set({tabs_count: curruentTabTitle.length}, function () {
+        //console.log("Value is set to " + curruentTabTitle.length);
+      });
+      save_count++;
+    }
+  });
 }
 
 //더보기 버튼을 누르면 tabmark.html 창을 새로 띄운다.
@@ -103,6 +108,7 @@ function load(loadData){
 window.onload = function()
 {
   // 새로고침 버튼 만들어야할 듯
+  //chrome.storage.sync.clear();
   getUrlAndTitle(false);
   load(false);
 
