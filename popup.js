@@ -1,6 +1,5 @@
 var allTabTitles = [];
-var save_count = 0;
-
+var tabs_length = [];
 // 현재 윈도우의 모든 탭의 URL, 제목 가져오기
 function getUrlAndTitle(saveData){
   
@@ -15,7 +14,7 @@ function getUrlAndTitle(saveData){
         //예를들면 B 창의 탭의 길이 == 2
         currnetWindowTabTitles.push(window_list[i].tabs[j].title);
         currnetWindowTabURLs.push(window_list[i].tabs[j].url);
-        console.log(currnetWindowTabTitles);
+        //console.log(currnetWindowTabTitles);
         // 지금 창의 탭의 n번째의 탭 제목을 저장
         //console.log(window_list[i].tabs[j].url, window_list[i].tabs[j].title);
         
@@ -53,7 +52,7 @@ function getUrlAndTitle(saveData){
 // 저장하기
 function save(curruentTabTitle, currnetWindowTabURLs) {
 
-  console.log("save test:",curruentTabTitle);
+  //console.log("save test:",curruentTabTitle);
   chrome.storage.sync.get("title", function (items) {
     
     // dict 이름 설정, indexing
@@ -63,6 +62,7 @@ function save(curruentTabTitle, currnetWindowTabURLs) {
     // 값이 존재한다면
     if("title" in items)
     {
+      //제목
       chrome.storage.sync.get("title", function (items) {
         var i = items["title"].length; // ex) 3개 저장, index 0,1,2, length 3, 
 
@@ -71,9 +71,14 @@ function save(curruentTabTitle, currnetWindowTabURLs) {
           console.log("save test2: ",items["title"][i]);
           i++;
         }
+
+        chrome.storage.sync.set({title: items["title"]}, function () {
+          console.log("Value is set to " + items["title"]);
+        });
         
       });
 
+      //url
       chrome.storage.sync.get("url", function (items) {
         var i = items["url"].length;
 
@@ -81,28 +86,32 @@ function save(curruentTabTitle, currnetWindowTabURLs) {
           items["url"][i] = currnetWindowTabURLs[j];
           i++;
         }
-        
+        chrome.storage.sync.set({url: items["url"]}, function () {
+          //console.log("Value is set to " + currnetWindowTabURLs);
+        });
       });
 
+      //save_count
       chrome.storage.sync.get("save_count", function (items) {
-        console.log("test1");
-        var save_count_list = [];
-        save_count_list.push(curruentTabTitle.length);
-        items["save_count"][save_count] = save_count_list;
-        console.log("test2");
-      });
-      save_count++;
-
-      chrome.storage.sync.set({title: items["title"]}, function () {
-        console.log("Value is set to " + items["title"]);
+        //현재 탭의 길이
+        var i = items["save_count"];
+        items["save_count"] = i+1;
+        console.log(items["save_count"]);
+        chrome.storage.sync.set({save_count: items["save_count"]}, function () {
+          //console.log("Value is set to " + curruentTabTitle.length);
+        });
       });
 
-      chrome.storage.sync.set({url: items["url"]}, function () {
-        //console.log("Value is set to " + currnetWindowTabURLs);
-      });
-
-      chrome.storage.sync.set({save_count: items["save_count"]}, function () {
-        //console.log("Value is set to " + curruentTabTitle.length);
+      //tabs_length
+      chrome.storage.sync.get("tabs_length", function (items) {
+        
+        //현재 탭의 길이
+        var i = items["tabs_length"].length;
+        items["tabs_length"][i] = curruentTabTitle.length;
+        //console.log(items["tabs_length"]);
+        chrome.storage.sync.set({tabs_length: items["tabs_length"]}, function () {
+          //console.log("Value is set to " + curruentTabTitle.length);
+        });
       });
     }
     // 존재하지 않는다면
@@ -116,10 +125,13 @@ function save(curruentTabTitle, currnetWindowTabURLs) {
         //console.log("Value is set to " + currnetWindowTabURLs);
       });
 
-      chrome.storage.sync.set({save_count: curruentTabTitle.length}, function () {
+      chrome.storage.sync.set({save_count: 0}, function () {
         //console.log("Value is set to " + curruentTabTitle.length);
       });
-      save_count++;
+      tabs_length.push(curruentTabTitle.length);
+      chrome.storage.sync.set({tabs_length: tabs_length}, function () {
+        //console.log("Value is set to " + curruentTabTitle.length);
+      });
     }
   });
 }
