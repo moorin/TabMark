@@ -50,14 +50,16 @@ function getUrlAndTitle(saveData){
 
 
 // 저장하기
+/*
+탭의 제목
+탭의 URL
+탭의 길이
+몇번째 저장인지
+*/
 function save(curruentTabTitle, currnetWindowTabURLs) {
 
   //console.log("save test:",curruentTabTitle);
   chrome.storage.sync.get("title", function (items) {
-    
-    // dict 이름 설정, indexing
-    // 사용 불가: console.log(eval("new_items_"+"="+""+("new_items_"+String(save_count))));
-    
 
     // 값이 존재한다면
     if("title" in items)

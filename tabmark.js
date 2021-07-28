@@ -1,57 +1,76 @@
 // 새로 추가 된 저장된 목록을 추가해서 저장
-// 저장할 때 storage의 마지막에 저장
+//ok: 저장할 때 storage의 마지막에 저장
 // storage에서 마지막 value 가져오기
-// get set.add을 이용해서 해결
 //ok: title, url을 저장해 놓은 걸 indexing 할 수 있는지
 //ok: 누적 저장으로 slicing? ex) 6, 3, 5 -> 6, 9, 14
 //ok: tabs_count
 
 //저장한 데이터 꺼내와서 확인하기
 
-var save_count_list = [];
+var curruentTabsLength = 0;
+var total_tabs_length = 0;
+var time_flag = 0;
+
+function saved_tabs_data(saved_tabs_data){
+    if(saved_tabs_data==true)
+    {
+        console.log("11111");
+        var saved_tabs_data = [];
+        chrome.storage.sync.get("save_count", function (items) {
+            console.log("22222");
+            var save_count = items["save_count"];
+            console.log("save count: ", items["save_count"]);
+            saved_tabs_data.push(save_count);
+            chrome.storage.sync.get("tabs_length", function (items) {
+                console.log("tabs_length: ", items["tabs_length"]);
+                curruentTabsLength = items["tabs_length"][save_count];
+                console.log(curruentTabsLength);
+                for(var i =0; i<items["tabs_length"].length; i++)
+                {
+                    total_tabs_length += items["tabs_length"][i];
+                }
+                console.log("33333");
+                console.log("total_tabs_length: ", total_tabs_length);
+                saved_tabs_data.push(total_tabs_length);
+            });
+        });
+    }console.log("44444");
+    return saved_tabs_data;
+}
+
 function data_load(loadData){
     if (loadData==true)
     {
-        // chrome.storage.storageArea.local.get("title", function (items){
-        //     console.log("new: ",items["title"]);
-        // });
-        chrome.storage.sync.get("save_count", function (items) {
-            //console.log(items);
-            for(var i =0; i<=items["save_count"].length; i++)
-            {
-                console.log("test");
-                console.log(items["save_count"][i]);
-                save_count_list.push(items["save_count"][i]);
-            }
-            console.log(save_count_list);
-        });
-        // 추가된 items
-        // index로 분리
-        // dict
-        // stack? dict? 1:1~13, 2:14~16, 3:17~20 => key 값은 save_count
+        var saved_tabs_data = [];
+        saved_tabs_data = saved_tabs_data(true);
+        console.log(saved_tabs_data);
+        // 0: save_count, 1: total_tabs_length
+        
+        // 위에있는 get이 끝나고 나서(데이터가 불러와 지고 나서) html 태그 만들기
+        // save_count : tabs_length  ex) 1:1, 2:3, 3:8
+        // hash map? key 날짜 / value 탭들 => ui
+
+        console.log("get 진입 전");
+        
         chrome.storage.sync.get("title", function (items) {
-            // items: 저장한 객체의 key/value
-            console.log("old: ",items);
-            //console.log("save_count: ",items["save_count"].length);
+            
+            console.log("get test: ",items["title"]);
+
             var newDiv = document.createElement("div"); newDiv.className = "save_item";
             document.getElementById("save_list").appendChild(newDiv);
-            var newDiv = document.createElement("div");
-            for (var i = 0; i < items["title"].length; i++) {
-            //저장한 파일을 tabmark.html의 <div class="save_list"></div>에 div(index) > li 형태로 띄워주기
+            console.log("test1");
+            for (var i = 0; i < curruentTabsLength; i++) {
+        
             // html 태그 만들기
-            // tabmark.html에 추가해야되니까 tabmark.js에 이 코드를 작성해야하고 그러면 변수값을 tabmark.js로 옮겨줘야한다.
-                    
                 var newLi = document.createElement("li");
                 var newSpan = document.createElement("span");
                 var newInput = document.createElement("input");
-
-
-                
-                var spanText = document.createTextNode(items["title"][i]);
+                //총 6, 지금 3개 출력, total - current + i
+                console.log("test2");
+                console.log(items["title"][total_tabs_length - curruentTabsLength + i]);
+                var spanText = document.createTextNode(items["title"][total_tabs_length - curruentTabsLength + i]);
                 newSpan.appendChild(spanText);
                 newInput.type="checkbox";
-                //console.log(newSpan);
-
                 newDiv.appendChild(newLi);
                 newLi.appendChild(newInput); newLi.appendChild(newSpan);                
             }
@@ -92,6 +111,7 @@ function load(load_flag){
 window.onload = function()
 {
   // 새로고침 버튼 만들어야할 듯
+    saved_tabs_data(true);
     data_load(true);
     load(false);
     document.getElementsByClassName("load")[0].addEventListener('click', function(){load(true);},false);
