@@ -55,6 +55,17 @@ function getUrlAndTitle(saveData){
 탭의 URL
 탭의 길이
 몇번째 저장인지
+
+list 1개
+네이버, 깃허브
+
+list 2개 이상
+새탭, 안녕하세요
+
+1: 네이버, 깃허브
+2: 새탭, 안녕하세요
+
+불러오기
 */
 function save(curruentTabTitle, currnetWindowTabURLs) {
 

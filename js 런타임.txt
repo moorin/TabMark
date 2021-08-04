@@ -1,0 +1,6 @@
+call stack
+실행될 코드의 한 줄 단위로 할당
+callback queue 비동기 처리가 끝난후 실행되어야 할 콜백함수가 차례로 할당 queue > callback
+event loop: queue에 할당된 함수를 순서에 맞춰 call stack에 할당
+
+https://developer.chrome.com/docs/extensions/mv3/tut_debugging/
