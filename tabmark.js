@@ -24,18 +24,21 @@ function data_load(loadData){
             return new Promise(function (resolve, reject) {
                 chrome.storage.sync.get("save_count", function (items) {
                     var save_count = items["save_count"];
+                    
                     console.log("save count: ", items["save_count"]);
                     chrome.storage.sync.get("tabs_length", function (items) {
+                        var tabs_length = items["tabs_length"];
                         console.log("tabs_length: ", items["tabs_length"]);
                         curruentTabsLength = items["tabs_length"][save_count];
                         console.log(curruentTabsLength);
+                        
                         for(var i =0; i<items["tabs_length"].length; i++)
                         {
                             total_tabs_length += items["tabs_length"][i];
                         }
                         console.log("total_tabs_length: ", total_tabs_length);
                         if(param)
-                            resolve([save_count, total_tabs_length]);
+                            resolve([save_count, total_tabs_length, tabs_length]);
                         else
                             reject(Error("chrome storage의 값을 불러올 수 없습니다."));
                     });
@@ -45,7 +48,7 @@ function data_load(loadData){
         };
 
         _promise(true)
-        .then(function([save_count, total_tabs_length]) {
+        .then(function([save_count, total_tabs_length, tabs_length]) {
             //성공시
             console.log("성공: ",save_count, total_tabs_length);
             chrome.storage.sync.get("title", function (items) {
@@ -54,30 +57,32 @@ function data_load(loadData){
     
                 var newDiv = document.createElement("div"); newDiv.className = "save_item";
                 document.getElementById("save_list").appendChild(newDiv);
+                var accum_tabs_length = 0;
                 for(var j = 0; j<save_count; j++)
                 {
-                    for (var i = 0; i < curruentTabsLength; i++) {
+                    for (var i = 0; i < tabs_length[j]; i++) {
             
                         // html 태그 만들기
                         var newLi = document.createElement("li");
                         var newSpan = document.createElement("span");
                         var newInput = document.createElement("input");
                         //총 6, 지금 3개 출력, total - current + i
-                        console.log(items["title"][total_tabs_length - curruentTabsLength + i]);
-                        var spanText = document.createTextNode(items["title"][total_tabs_length - curruentTabsLength + i]);
+                        console.log(items["title"][accum_tabs_length + i]);
+                        var spanText = document.createTextNode(items["title"][accum_tabs_length + i]);
                         newSpan.appendChild(spanText);
                         newInput.type="checkbox";
                         newDiv.appendChild(newLi);
-                        newLi.appendChild(newInput); newLi.appendChild(newSpan);                
+                        newLi.appendChild(newInput); newLi.appendChild(newSpan);          
                     }
-                    // 전체 선택 버튼
-                    var newLi = document.createElement("li");
-                    var newInput = document.createElement("input");
-        
-                    document.getElementById("save_list").appendChild(newLi);
-                    newInput.type="checkbox";
-                    newLi.appendChild(newInput); 
+                    accum_tabs_length += tabs_length[j];
                 }
+                // 전체 선택 버튼
+                var newLi = document.createElement("li");
+                var newInput = document.createElement("input");
+    
+                document.getElementById("save_list").appendChild(newLi);
+                newInput.type="checkbox";
+                newLi.appendChild(newInput); 
             });
 
         }, function(error) {
